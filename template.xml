@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:http-policy-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+	xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd
+               http://www.mulesoft.org/schema/mule/http-policy-transform http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+	<http-policy:proxy 	name="{{{policyId}}}-custom-policy">
+		<http-policy:source propagateMessageTransformations="true">
+
+	{{#if policyEnableMCSLog}}
+           
+			<try>
+				<set-variable variableName="policyEnableMCSLog"	value="{{{policyEnableMCSLog}}}" />
+				<error-handler>
+					<on-error-continue type="EXPRESSION" />
+				</error-handler>
+			</try>
+	{{/if}}
+	
+	<try>
+		<set-variable variableName="policyEnableMCSLogHeader"	value="#[attributes.headers.policyEnableMCSLog]" />
+		<error-handler>
+			<on-error-continue type="EXPRESSION" />
+		</error-handler>
+	</try>
+	
+	{{#if policyEnableMCSTaskLog}}
+			 
+			<try>
+				<set-variable variableName="policyEnableMCSTaskLog"	value="{{{policyEnableMCSTaskLog}}}" />
+				<error-handler>
+					<on-error-continue type="EXPRESSION" />
+				</error-handler>
+			</try>
+	{{/if}}
+	
+	<try>
+		<set-variable variableName="policyEnableMCSTaskLogHeader"	value="#[attributes.headers.policyEnableMCSTaskLog]" />
+		<error-handler>
+			<on-error-continue type="EXPRESSION" />
+		</error-handler>
+	</try>
+	
+	{{#if policyEnableJsonLog}}
+           
+			<try>
+				<set-variable variableName="policyEnableJsonLog"	value="{{{policyEnableJsonLog}}}" />
+				<error-handler>
+					<on-error-continue type="EXPRESSION" />
+				</error-handler>
+			</try>
+	{{/if}}
+	
+	<try>
+		<set-variable variableName="policyEnableJsonLogHeader"	value="#[attributes.headers.policyEnableJsonLog]" />
+		<error-handler>
+			<on-error-continue type="EXPRESSION" />
+		</error-handler>
+	</try>
+
+	{{#if policyEnableJsonReqPayloadLog}}
+			 
+			<try>
+				<set-variable variableName="policyEnableJsonReqPayloadLog"	value="{{{policyEnableJsonReqPayloadLog}}}" />
+				<error-handler>
+					<on-error-continue type="EXPRESSION" />
+				</error-handler>
+			</try>
+	{{/if}}
+	
+	
+	<logger level="DEBUG" message="Reading policyEnableJsonTaskPayloadLog headers in Policy: #[attributes.headers.policyEnableJsonTaskPayloadLog]" category="Mule Custom Logging Policy"/> 
+	<try>
+		<set-variable variableName="policyEnableJsonReqPayloadLogHeader"	value="#[attributes.headers.policyEnableJsonReqPayloadLog]" />
+		<error-handler>
+			<on-error-continue type="EXPRESSION" />
+		</error-handler>
+	</try>
+	
+	
+	{{#if policyEnableJsonTaskPayloadLog}}
+			 
+			<try>
+				<set-variable variableName="policyEnableJsonTaskPayloadLog"	value="{{{policyEnableJsonTaskPayloadLog}}}" />
+				<error-handler>
+					<on-error-continue type="EXPRESSION" />
+				</error-handler>
+			</try>
+	{{/if}}
+	
+	<try>
+		<set-variable variableName="policyEnableJsonTaskPayloadLogHeader"	value="#[attributes.headers.policyEnableJsonTaskPayloadLog]" />
+		<error-handler>
+			<on-error-continue type="EXPRESSION" />
+		</error-handler>
+	</try>
+	
+				<try>
+					<!-- <logger level="INFO" message="policylog: #[vars.policyEnableJsonLog]" category="Mule Custom Logging policy"/> -->
+					
+				<choice>
+					
+					
+					<when expression="#[((vars.policyEnableJsonLog default false) or (vars.policyEnableMCSLog default false) or (vars.policyEnableMCSTaskLog default false))]">
+						<try>
+							<logger level="DEBUG" message="Before adding headers in Policy: #[attributes.headers]" category="Mule Custom Logging Policy"/>
+							<logger level="DEBUG" message="Before reading header policyEnableJsonReqPayloadLogHeader in Policy: #[attributes.headers.policyEnableJsonReqPayloadLog]" category="Mule Custom Logging Policy"/>
+							<logger level="DEBUG" message="Before adding variable policyEnableJsonReqPayloadLogHeader in Policy: #[vars.policyEnableJsonReqPayloadLogHeader]" category="Mule Custom Logging Policy"/>
+							<logger level="DEBUG" message="Before adding init Flags to Policy: #[vars.init]" category="Mule Custom Logging Policy"/>
+							<http-transform:remove-headers>
+								<http-transform:header-names>#[['policyEnableJsonLog', 'policyEnableJsonReqPayloadLog', 'policyEnableJsonTaskPayloadLog', 'policyEnableMCSLog', 'policyEnableMCSTaskLog']]</http-transform:header-names>
+							</http-transform:remove-headers>
+							<http-transform:add-request-headers-list>
+								<http-transform:new-headers>										
+								<http-transform:header headerName="policyEnableJsonLog" headerValue="#[((vars.policyEnableJsonLog default false) or (vars.policyEnableJsonLogHeader default false))]" />
+								<http-transform:header headerName="policyEnableJsonReqPayloadLog" headerValue="#[((vars.policyEnableJsonReqPayloadLog default false) or (vars.policyEnableJsonReqPayloadLogHeader default false))]" />
+								<http-transform:header headerName="policyEnableJsonTaskPayloadLog" headerValue="#[((vars.policyEnableJsonTaskPayloadLog default false) or (vars.policyEnableJsonTaskPayloadLogHeader default false))]" />
+								<http-transform:header headerName="policyEnableMCSLog" headerValue="#[((vars.policyEnableMCSLog default false) or (vars.policyEnableMCSLogHeader default false))]" />
+								<http-transform:header headerName="policyEnableMCSTaskLog" headerValue="#[((vars.policyEnableMCSTaskLog default false) or (vars.policyEnableMCSTaskLogHeader default false))]" />
+								</http-transform:new-headers>
+							</http-transform:add-request-headers-list>
+							<logger level="DEBUG" message="Policy Variables Flags added : #[attributes.headers]" category="Mule Custom Logging Policy"/>
+							<flow-ref doc:name="Execute BaseLoggerCommon" doc:id="541f413c-fcfe-43b8-97fa-9544bfa8ffe5" name="common-baseLogger-module" />
+							<flow-ref doc:name="Execute ProxyRequest " doc:id="2833575a-e75b-4f7a-a59e-480eef27ab79" name="common-mcsRequest-module"/>
+					
+							<choice>
+								<when expression="#[isEmpty(attributes.headers.correlationid default null)]">
+								
+						<http-transform:remove-headers>
+                                  <http-transform:header-names>#[['correlationid']]</http-transform:header-names>
+                        </http-transform:remove-headers>
+								
+									<http-transform:add-request-headers-list>
+										<http-transform:new-headers>
+											<http-transform:header headerName="correlationid" headerValue="#[vars.init.correlationId default uuid()]" />
+										
+										</http-transform:new-headers>
+									</http-transform:add-request-headers-list>
+									
+								</when>
+							</choice>
+							<choice>
+								<when expression="#[isEmpty(attributes.headers.transactionid default null)]">
+								
+						<http-transform:remove-headers>
+                          <http-transform:header-names>#[['transactionid']]</http-transform:header-names>
+                        </http-transform:remove-headers>
+								
+									<http-transform:add-request-headers-list>
+										<http-transform:new-headers>
+											<http-transform:header	headerName="transactionid"	headerValue="#[vars.init.transactionid default uuid()]" />
+										</http-transform:new-headers>
+									</http-transform:add-request-headers-list>
+								</when>
+							</choice>
+							<error-handler>
+								<on-error-continue type="ANY">
+									<logger level="ERROR" message="Error in custom policy  Logger Details correlationid : #[vars.init.correlationid default attributes.headers.correlationid]  | Error:  #[error.description]" category="Mule Custom Logging Policy"/>
+								</on-error-continue>
+							</error-handler>
+						</try>
+					</when>
+				</choice>
+			</try>
+			<http-policy:execute-next />
+			<choice>
+				<when expression="#[(vars.policyEnableJsonLog default false)]">
+					<try>
+						<flow-ref doc:name="Execute ProxyResponse " doc:id="e0ad564a-9bce-4dd4-b3d5-aa45e13aae79" name="common-mcsResponse-module"/>
+						<error-handler>
+							<on-error-continue type="ANY">
+								<logger level="ERROR" message="Error in custom policy  Logger Details correlationid : #[vars.init.correlationid default attributes.headers.correlationid]  | Error:  #[error.description]" category="Mule Custom Logging Policy"/>
+							</on-error-continue>
+						</error-handler>
+					</try>
+				</when>
+			</choice>
+		</http-policy:source>
+	</http-policy:proxy>
+	<import doc:name="Import" doc:id="0c7602c1-903a-486a-85ee-ac42f3dd9625" file="common-init-module.xml" />
+	<import doc:name="Import" doc:id="389dc678-c827-48f0-be4c-a44d4496bb86" file="common-mcs-module.xml" />
+	<import doc:name="Import" doc:id="868e9b2c-72f6-40ff-8776-bd291e159013" file="common-config-module.xml" />
+</mule>
